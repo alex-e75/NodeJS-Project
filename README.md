@@ -28,8 +28,6 @@ npm start
 
 To see the website in the browser go to ```localhost:8080/```.
 
-To see the credentials of these test users see the file [/bin/populate.ts](https://github.com/geraosio/ece-nodejs/blob/master/bin/populate.ts).
-
 ## Contributors
 [Alexandre ELBAZ](https://github.com/alex-e75)
 [Alexis CALLIES](https://github.com/alexicali)
