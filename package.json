@@ -4,6 +4,8 @@
   "description": "NodeJS Project - ECE ING4",
   "main": "index.js",
   "scripts": {
+    "build": "tsc",
+    "postinstall": "npm run build",
     "start": "./node_modules/.bin/ts-node src/server.ts",
     "test": "./node_modules/.bin/mocha -r ts-node/register src/**/*.test.ts",
     "dev": "./node_modules/.bin/nodemon "
