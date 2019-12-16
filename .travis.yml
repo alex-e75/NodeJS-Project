@@ -7,6 +7,7 @@ services:
 before_script:
   - npm install
 script:
+  - npm test
   - docker build -t node-project .
 after_success:
   - docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
@@ -14,3 +15,9 @@ after_success:
   - docker push $DOCKER_USERNAME/node-project:$TRAVIS_BUILD_NUMBER
   - docker tag node-project $DOCKER_USERNAME/node-project:latest
   - docker push $DOCKER_USERNAME/node-project:latest
+deploy:
+  provider: heroku
+  api_key:
+    secure: $HEROKU_KEY
+  app:
+    master: ece-node-project

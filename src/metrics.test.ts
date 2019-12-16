@@ -1,5 +1,5 @@
 import { expect } from 'chai'
-import { Metric, MetricsHandler } from '../db/metrics'
+import { Metric, MetricsHandler } from './metrics'
 import { LevelDB } from "./leveldb"
 
 const dbPath: string = 'db_test'

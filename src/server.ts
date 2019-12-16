@@ -1,7 +1,7 @@
 import express = require('express')
 import bodyparser = require('body-parser')
 import morgan = require('morgan')
-import { MetricsHandler, Metric } from '../db/metrics'
+import { MetricsHandler, Metric } from './metrics'
 import session = require('express-session')
 import levelSession = require('level-session-store')
 import { UserHandler, User } from './user'
@@ -24,7 +24,7 @@ app.use(bodyparser.json())
 app.use(bodyparser.urlencoded())
 app.use(morgan('dev'))
 app.use(session({
-  secret: 'my very secret phrase',
+  secret: 'lorem ipsum needless cartage habanera glittery dismal barnacle',
   store: new LevelStore('./db/sessions'),
   resave: true,
   saveUninitialized: true
