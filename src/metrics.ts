@@ -1,7 +1,6 @@
 import { LevelDB } from '../src/leveldb'
 import WriteStream from 'level-ws'
 
-
 export class Metric {
     public timestamp: string
     public value: number
@@ -13,7 +12,7 @@ export class Metric {
 }
 
 export class MetricsHandler {
-    private db: any
+    public db: any
 
     constructor(dbPath: string) {
         this.db = LevelDB.open(dbPath)
@@ -24,7 +23,7 @@ export class MetricsHandler {
         stream.on('error', callback)
         stream.on('close', callback)
         metrics.forEach((m: Metric) => {
-            stream.write({ key: `metric:${key}${m.timestamp}`, value: m.value })
+            stream.write({ key: `metric:${key}:${m.timestamp}`, value: m.value })
         })
         stream.end()
     }
@@ -39,7 +38,7 @@ export class MetricsHandler {
             })
             .on('data', (data: any) => {
                 console.log(data)
-                const [_, k, timestamp] = data.key.split(":")
+                const [_, k, timestamp] = data.key.split(':')
                 const value = data.value
 
                 if (key != k) {

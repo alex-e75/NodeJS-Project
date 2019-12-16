@@ -1,8 +1,16 @@
 # Node.js Project
 
-## Introduction
+[![Build Status](https://travis-ci.org/alex-e75/NodeJS-Project.svg?branch=master)](https://travis-ci.org/alex-e75/NodeJS-Project)
+The branch master is automatically deployed on Heroku : https://ece-node-project.herokuapp.com
 
-Website that receives a ```name``` parameter and says hello + the name passed as parameter.
+## Introduction
+Made by : Alexandre ELBAZ, Alexis CALLIES and Baptiste LAFAY
+
+This project is a simple dashboard app made in NodeJS with the following features:
+* User login
+* A user can insert metrics
+* A user can retrieve his metrics in a graph
+* A user can only access his own metrics
 
 ## Installation
 
@@ -28,9 +36,8 @@ npm start
 
 To see the website in the browser go to ```localhost:8080/```.
 
-To see the credentials of these test users see the file [/bin/populate.ts](https://github.com/geraosio/ece-nodejs/blob/master/bin/populate.ts).
-
 ## Contributors
 [Alexandre ELBAZ](https://github.com/alex-e75)
 [Alexis CALLIES](https://github.com/alexicali)
+[Baptiste LAFAY](https://github.com/balaf78)
 
