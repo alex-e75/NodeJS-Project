@@ -37,12 +37,10 @@ export class MetricsHandler {
                 callback(null, met)
             })
             .on('data', (data: any) => {
-                console.log(data)
                 const [_, k, timestamp] = data.key.split(':')
                 const value = data.value
 
                 if (key != k) {
-                    console.log(`LevelDB error: ${data} does not match key ${key}`)
                 } else {
                     met.push(new Metric(timestamp, value))
                 }
@@ -61,7 +59,6 @@ export class MetricsHandler {
         const rs = this.db.createReadStream()
         var met: Metric[] = []
         rs.on('data', function (data: any) {
-            console.log(data);
             const [timestamp] = data.key.split(":")
             met.push(new Metric(timestamp, data.value))
         })
