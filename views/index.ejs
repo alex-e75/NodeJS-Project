@@ -3,29 +3,159 @@
 
 <head>
     <% include partials/head %>
+    <script src="https://github.com/chartjs/Chart.js/releases/download/v2.7.3/Chart.bundle.min.js"> </script>
 </head>
 
 <body class="container">
     <div class="col-md-6 col-md-offset-3">
         <h1>Hello <%= name %></h1>
-        <button class="btn btn-success" id="show-metrics">
-            Bring the metrics
+        <button class="btn btn-primary" id="show-metrics">
+            Bring the metrics as JSON
         </button>
         <button class="btn btn-danger" href="/logout" onClick='document.location.href="/logout"'>
             Logout
         </button>
         <div id="metrics"></div>
     </div>
+
+    <!-- Metrics -->
+    <div id="form_output">
+    </div>
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <div class="mt-4">
+                    <h3 class="my-2 font-weight-normal">Add a metric</h3>
+                    <div class="form-inline p-3 border bg-light my-lg-0">
+                        <form action="/metrics/<%= name %>" id="addMetric" method="POST">
+                            <input id="metricTimestamp" name="timestamp" type="hidden">
+                            <input required class="form-control mr-sm-2" id="metricValue" name="value" type="text"
+                                placeholder="Value" aria-label="Search">
+                            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Add a metric</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="mt-4">
+                    <h3 class="my-2 font-weight-normal">Modify a metric</h3>
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th scope="col">Date</th>
+                                <th scope="col">Value</th>
+                                <th scope="col">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% if (metrics) { %>
+                            <% metrics.forEach( m=> { %>
+                            <tr>
+                                <form action="/metrics/<%= name %>" method="POST">
+                                    <td><input type="text" name="timestamp" value="<%= m.timestamp %>"></td>
+                                    <td><input type="text" name="value" value="<%= m.value %>"></td>
+                                    <td class="text-right row">
+                                        <div class="btn-group" role="group">
+                                            <div class="col-md-4">
+                                                <button type="submit"
+                                                    class="btn btn-sm btn-outline-warning">Edit</button>
+                                            </div>
+                                </form>
+                                <div class="col-md-4">
+                                    <form id="deleteMetric" action="/metrics/delete/<%= name %>" method="POST">
+                                        <input type="hidden" name="timestamp" value="<%= m.timestamp %>">
+                                        <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                                    </form>
+                                </div>
+                </div>
+                </td>
+                </tr>
+                <% }) %>
+                <% } %>
+                </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    </div>
+    <!-- Metrics -->
+    <div class="container">
+        <h3 class="my-2 font-weight-normal">Chart</h3>
+        <canvas id="lineChart"></canvas>
+    </div>
+
     <script>
         $('#show-metrics').click((e) => {
             e.preventDefault();
-            $.getJSON("/metrics.json", {}, (data) => {
+            $.getJSON("/metrics/<%= name %>", {}, (data) => {
                 const content = data.map(d => {
-                    return 'timestamp: ' + d.timestamp + ', value: ' + d.value + '';
+                    return 'timestamp: ' + d.timestamp + ', value: ' + d.value + '' + '</br>';
                 })
-                $('#metrics').append(content.join("\n"));
+                $('#metrics').html(content.join("\n"));
             });
         })
+
+        $(function () {
+            $('#deleteMetric').on('submit', function (e) {
+                $.ajax({
+                    type: 'post',
+                    url: $(this).attr('action'),
+                    data: $(this).serialize(),
+                    success: function () {
+                        $("#form_output").html("The metric was successfully removed from the database").addClass("mt-4 alert alert-success");
+                        location.reload();
+                    }
+                });
+                e.preventDefault();
+            });
+        });
+
+        $(document).ready(function () {
+            $('#addMetric').on('submit', function (e) {
+                e.preventDefault();
+                $("#metricTimestamp").val(new Date().getTime());
+                $.ajax({
+                    url: $(this).attr('action') || window.location.pathname,
+                    type: "POST",
+                    data: $(this).serialize(),
+                    success: function (data) {
+                        $("#form_output").html(data).addClass("mt-4 alert alert-success");
+                        location.reload();
+                    },
+                    error: function (jXHR, textStatus, errorThrown) {
+                        alert(errorThrown);
+                    }
+                });
+            });
+        });
+
+        //line
+        var ctxL = document.getElementById("lineChart").getContext('2d');
+        var metrics = JSON.parse('<%- JSON.stringify(metrics) %>');
+        var xAxisData = []
+        var yAxisData = []
+        metrics.forEach(metric => {
+            metric.timestamp = new Date(metric.timestamp * 1000);
+        })
+        metrics.forEach(metric => {
+            xAxisData.push(metric.timestamp)
+            yAxisData.push(metric.value)
+        })
+
+        var myLineChart = new Chart(ctxL, {
+            type: 'bar',
+            data: {
+                labels: xAxisData,
+                datasets: [{
+                    label: "Value",
+                    data: yAxisData,
+                    backgroundColor: 'rgba(105, 0, 132, .2)',
+                    borderColor: 'rgba(200, 99, 132, .7)',
+                    borderWidth: 2
+                }
+                ]
+            }
+        });
     </script>
 </body>
 

@@ -12,7 +12,7 @@
     "type": "git",
     "url": "git+https://github.com/alex-e75/NodeJS.git"
   },
-  "author": "Alexandre ELBAZ, Alexis CALLIES",
+  "author": "Alexandre ELBAZ, Alexis CALLIES, Baptiste LAFAY",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/alex-e75/NodeJS/issues"

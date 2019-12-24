@@ -5,23 +5,67 @@
     <% include partials/head %>
 </head>
 
-<div id="form">
-    <p>Please login to your account</p>
-    <hr />
-    <form action="./user/" method="post">
-        <div class="form-group">
-            <label for="form_username">Username</label>
-            <input id="form_username" type="text" name="username" />
+<main class="login-form">
+    <div class="container">
+        <div id="form_output">
         </div>
-        <div class="form-group">
-            <label for="form_username">E-mail</label>
-            <input id="form_username" type="text" name="email" />
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header">Register</div>
+                    <div class="card-body">
+                        <form id="registerForm" action="/user/" method="post">
+                            <div class="form-group row">
+                                <label for="form_username"
+                                    class="col-md-4 col-form-label text-md-right">Username</label>
+                                <div class="col-md-6">
+                                    <input type="text" id="form_username" class="form-control" name="username" required
+                                        autofocus>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="form_email" class="col-md-4 col-form-label text-md-right">E-mail</label>
+                                <div class="col-md-6">
+                                    <input type="email" id="form_email" class="form-control" name="email" required>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="form_password"
+                                    class="col-md-4 col-form-label text-md-right">Password</label>
+                                <div class="col-md-6">
+                                    <input type="password" id="form_password" class="form-control" name="password"
+                                        required>
+                                </div>
+                            </div>
+                            <div class="col-md-6 offset-md-4">
+                                <button class="btn btn-primary btn-block" type="submit" value="Submit">Create an
+                                    account</button>
+                            </div>
+                    </div>
+                    </form>
+                </div>
+            </div>
         </div>
-        <div class="form-group">
-            <label for="form_password">Password</label>
-            <input id="form_password" type="password" name="password" />
-        </div>
-        <button class="btn btn-primary btn-block" type="submit" value="Submit">Create an account</button>
-    </form>
-    <hr />
-</div>
+    </div>
+    </div>
+</main>
+
+<script>
+    $(document).ready(function () {
+        $('#registerForm').on('submit', function (e) {
+            e.preventDefault();
+            $.ajax({
+                url: $(this).attr('action') || window.location.pathname,
+                type: "POST",
+                data: $(this).serialize(),
+                success: function (data) {
+                    $("#form_output").html(data).addClass("mt-4 alert alert-success");
+                    $(location).attr('href', '/')
+                },
+                error: function (jXHR, textStatus, errorThrown) {
+                    alert(errorThrown);
+                }
+            });
+        });
+    });
+</script>

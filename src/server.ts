@@ -66,51 +66,61 @@ authRouter.get('/logout', (req: any, res: any) => {
 })
 
 app.get('/', authCheck, (req: any, res: any) => {
-  res.render('index', { name: req.session.username })
+  dbMet.get(req.session.user.username, (err: Error | null, result?: Metric[]) => {
+    if (err) {
+      throw err
+    }
+    res.render('index', {
+      name: req.session.user.username,
+      metrics: result
+    })
+  })
 })
 
 app.get(
-    '/hello/:name',
-    (req, res) => res.render('./hello.ejs', { name: req.params.name })
+  '/hello/:name',
+  (req, res) => res.render('./hello.ejs', { name: req.params.name })
 )
 
 app.get('/metrics.json', (req: any, res: any) => {
-    MetricsHandler.get((err: Error | null, result?: any) => {
-        if (err) {
-            throw err
-        }
-        res.json(result);
-    })
+  MetricsHandler.get((err: Error | null, result?: any) => {
+    if (err) {
+      throw err
+    }
+    res.json(result);
+  })
 })
 
 app.get('/metrics/:id', (req: any, res: any, next: any) => {
-    dbMet.get(req.params.id, (err: Error | null, result?: Metric[]) => {
-      if (err) next(err)
-      if (result === undefined) {
-        res.write('no result')
-        res.send()
-      } else res.json(result)
-    })
+  dbMet.get(req.params.id, (err: Error | null, result?: Metric[]) => {
+    if (err) next(err)
+    if (result === undefined) {
+      res.write('no result')
+      res.send()
+    } else res.json(result)
   })
+})
 
-app.get('/metrics', (req: any, res: any) => {
-    dbMet.getAll((err: Error | null, result?: any) => {
-      if (err) {
-        throw err
-      }
-      res.json(result)
+app.get('/metrics', authCheck, (req: any, res: any) => {
+  dbMet.get(req.session.user.username, (err: Error | null, result?: Metric[]) => {
+    if (err) {
+      throw err
+    }
+    res.render('metrics', {
+      metrics: result
     })
   })
+})
 
 //
 // DELETE
 //
 
 app.delete('/metrics/:id', (req: any, res: any) => {
-    dbMet.remove(req.params.id, (err: Error | null) => {
-        if (err) throw err
-        res.status(200).send(`The metric was successfully removed from the database.`)
-    })
+  dbMet.remove(req.params.id, (err: Error | null) => {
+    if (err) throw err
+    res.status(200).send(`The metric was successfully removed from the database.`)
+  })
 })
 
 //
@@ -120,7 +130,7 @@ app.delete('/metrics/:id', (req: any, res: any) => {
 userRouter.post('/', (req: any, res: any, next: any) => {
   dbUser.get(req.body.username, function (err: Error | null, result?: User) {
     if (!err || result !== undefined) {
-     res.status(409).send("user already exists")
+      res.status(409).send("user already exists")
     } else {
       dbUser.save(req.body, function (err: Error | null) {
         if (err) next(err)
@@ -143,16 +153,25 @@ authRouter.post('/login', (req: any, res: any, next: any) => {
   })
 })
 
-app.post('/metrics/:id', (req: any, res: any) => {
-    dbMet.save(req.params.id, req.body, (err: Error | null) => {
-        if (err) throw err
-        res.status(200).send(`The metric was successfully added to the database.`)
-    })
+app.post('/metrics/:id', authCheck, (req: any, res: any) => {
+  if (req.body.timestamp == "" || req.body.value == "") res.status(401).send("Incorrect format")
+  var data = [new Metric(req.body.timestamp, req.body.value)];
+  dbMet.save(req.params.id, data, (err: Error | null) => {
+    if (err) throw err
+    res.status(200).send(`The metric was successfully added to the database.`)
+  })
+})
+
+app.post('/metrics/delete/:id', authCheck, (req: any, res: any) => {
+  dbMet.remove('metric:'+req.params.id+':'+req.body.timestamp, (err: Error | null) => {
+    if (err) throw err
+    res.status(200).send(`The metric was successfully removed from the database.`)
+  })
 })
 
 app.listen(port, (err: Error) => {
-    if (err) {
-        throw err
-    }
-    console.log(`server is listening on port ${port}`)
+  if (err) {
+    throw err
+  }
+  console.log(`server is listening on port ${port}`)
 })
