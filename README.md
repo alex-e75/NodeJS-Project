@@ -38,7 +38,7 @@ To see the website in the browser go to ```localhost:8080/```.
 
 ## Populate script
 
-In order to populate the database with random date
+In order to populate the database with random data
 ```
 npm run populate
 ```
