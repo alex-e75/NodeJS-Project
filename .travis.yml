@@ -22,3 +22,5 @@ deploy:
     secure: $HEROKU_KEY
   app:
     master: ece-node-project
+  run:
+    - "npm run populate"
