@@ -29,8 +29,7 @@
                     <div class="form-inline p-3 border bg-light my-lg-0">
                         <form action="/metrics/<%= name %>" id="addMetric" method="POST">
                             <input id="metricTimestamp" name="timestamp" type="hidden">
-                            <input required class="form-control mr-sm-2" id="metricValue" name="value" type="text"
-                                placeholder="Value" aria-label="Search">
+                            <input required class="form-control mr-sm-2" id="metricValue" name="value" type="number" placeholder="Value" aria-label="Search">
                             <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Add a metric</button>
                         </form>
                     </div>
@@ -53,7 +52,7 @@
                             <tr>
                                 <form action="/metrics/<%= name %>" method="POST">
                                     <td><input type="text" name="timestamp" value="<%= m.timestamp %>"></td>
-                                    <td><input type="text" name="value" value="<%= m.value %>"></td>
+                                    <td><input type="number" name="value" value="<%= m.value %>"></td>
                                     <td class="text-right row">
                                         <div class="btn-group" role="group">
                                             <div class="col-md-4">
@@ -135,7 +134,7 @@
         var xAxisData = []
         var yAxisData = []
         metrics.forEach(metric => {
-            metric.timestamp = new Date(metric.timestamp * 1000);
+            metric.timestamp = new Date(metric.timestamp/1000);
         })
         metrics.forEach(metric => {
             xAxisData.push(metric.timestamp)
